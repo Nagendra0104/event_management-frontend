@@ -70,7 +70,7 @@ export default function EventPage() {
       <div>
         {event.image && (
           <img
-            src={event.image ?? "../../public/assets/paduru.png"}
+            src={event.image ?? "../../assets/paduru.png"}
             alt=""
             height="500px"
             width="1440px"
