@@ -1,15 +1,15 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { UserContext } from '../UserContext';
 import { getDownloadURL, uploadBytes, ref, storage } from '../Firebase';
 import { useNavigate } from 'react-router-dom';
 
 export default function AddEvent() {
-  const { user } = useContext(UserContext);
+  const { user,loading } = useContext(UserContext);
   const navigate = useNavigate();
   console.log("User:", user);
   const [formData, setFormData] = useState({
-    owner: user.name,
+    owner: "",
     title: "",
     optional: "",
     description: "",
@@ -22,6 +22,12 @@ export default function AddEvent() {
     likes: 0
   });
   const [isUploading, setIsUploading] = useState(false); // State to track loading
+
+  useEffect(() => {
+    if (!loading && user) {
+      setFormData((prev) => ({ ...prev, owner: user.name }));
+    }
+  }, [user, loading]);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -74,6 +80,14 @@ export default function AddEvent() {
       });
   };
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!user) {
+    return <p>Please log in to post an event.</p>;
+  }
+
   return (
     <div className='flex flex-col ml-20 mt-10'>
       <div><h1 className='font-bold text-[36px] mb-5'>Post an Event</h1></div>
@@ -85,6 +99,7 @@ export default function AddEvent() {
             <input
               type="text"
               name="title"
+              required
               className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.title}
               onChange={handleChange}
@@ -94,6 +109,7 @@ export default function AddEvent() {
             Description:
             <textarea
               name="description"
+              required
               className=' rounded mt-2 pl-5 px-4 py-2 ring-sky-700 ring-2 h-8 border-none'
               value={formData.description}
               onChange={handleChange}
@@ -103,6 +119,7 @@ export default function AddEvent() {
             Organized By:
             <input
               type="text"
+              required
               className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               name="organizedBy"
               value={formData.organizedBy}
@@ -113,6 +130,7 @@ export default function AddEvent() {
             Event Date:
             <input
               type="date"
+              required
               className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               name="eventDate"
               value={formData.eventDate}
@@ -123,6 +141,7 @@ export default function AddEvent() {
             Event Time:
             <input
               type="time"
+              required
               name="eventTime"
               className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.eventTime}
@@ -133,6 +152,7 @@ export default function AddEvent() {
             Location:
             <input
               type="text"
+              required
               name="location"
               className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.location}
@@ -143,6 +163,7 @@ export default function AddEvent() {
             Ticket Price:
             <input
               type="number"
+              required
               name="ticketPrice"
               className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.ticketPrice}
@@ -153,6 +174,7 @@ export default function AddEvent() {
             Image:
             <input
               type="file"
+              required
               name="image"
               className=' rounded mt-2 pl-5 px-4 py-10 ring-sky-700 ring-2 h-8 border-none'
               onChange={handleImageUpload}

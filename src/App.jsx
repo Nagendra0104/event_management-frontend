@@ -18,7 +18,7 @@ import PaymentSummary from './pages/PaymentSummary'
 import TicketPage from './pages/TicketPage'
 // import CreatEvent from './pages/CreateEvent'
 
-axios.defaults.baseURL = 'http://localhost:4000/';
+axios.defaults.baseURL = 'https://event-management-backend-inky.vercel.app';
 axios.defaults.withCredentials=true;
 
 function App() {
