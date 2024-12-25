@@ -1,12 +1,14 @@
 /* eslint-disable react/jsx-key */
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BsArrowRightShort } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
+import { UserContext } from "../UserContext";
 
 export default function IndexPage() {
   const [events, setEvents] = useState([]);
+  const { user, setUser } = useContext(UserContext); 
 
   //! Fetch events from the server ---------------------------------------------------------------
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function IndexPage() {
       <div className="mt-1 flex flex-col">
         <div className="hidden sm:block">
           <div href="#" className="flex item-center inset-0">
-            <img src="../src/assets/hero.jpg" alt="" className="w-full" />
+            <img src="../src/assets/hero.jpg" alt="" className="w-full h-[60vh]" />
           </div>
         </div>
 
@@ -61,7 +63,7 @@ export default function IndexPage() {
                 return (
                   <div className="bg-white rounded-xl relative" key={event._id}>
                     <div className="rounded-tl-[0.75rem] rounded-tr-[0.75rem] rounded-br-[0] rounded-bl-[0] object-fill aspect-16:9">
-                      {event.image && (
+                      {/* {event.image && (
                         <img
                           src={`http://localhost:4000/api/${event.image}`}
                           alt={event.title}
@@ -69,7 +71,7 @@ export default function IndexPage() {
                           height="200"
                           className="w-full h-full"
                         />
-                      )}
+                      )} */}
                       <div className="absolute flex gap-4 bottom-[240px] right-8 md:bottom-[20px] md:right-3 lg:bottom-[250px] lg:right-4 sm:bottom-[260px] sm:right-3">
                         <button onClick={() => handleLike(event._id)}>
                           <BiLike className="w-auto h-12 lg:h-10 sm:h-12 md:h-10 bg-white p-2 rounded-full shadow-md transition-all hover:text-primary" />
@@ -78,7 +80,7 @@ export default function IndexPage() {
                     </div>
 
                     <img
-                      src="../src/assets/paduru.png"
+                      src={event.image ?? "../src/assets/paduru.png"}
                       alt=""
                       className="rounded-tl-[0.75rem] rounded-tr-[0.75rem] rounded-br-[0] rounded-bl-[0] object-fill aspect-16:9"
                     />
@@ -121,7 +123,8 @@ export default function IndexPage() {
                           </span>
                         </div>
                       </div>
-                      <Link
+                      {user ? (
+                        <Link
                         to={"/event/" + event._id}
                         className="flex justify-center">
                         <button className="primary flex items-center gap-2">
@@ -129,6 +132,16 @@ export default function IndexPage() {
                           <BsArrowRightShort className="w-6 h-6" />
                         </button>
                       </Link>
+                      ) : (
+                        <Link
+                        to="/login"
+                        className="flex justify-center">
+                        <button className="primary flex items-center gap-2">
+                          Login to Book
+                          <BsArrowRightShort className="w-6 h-6" />
+                        </button>
+                        </Link>
+                        )}
                     </div>
                   </div>
                 );

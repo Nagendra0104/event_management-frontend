@@ -1,14 +1,16 @@
 // import React from 'react'
 import axios from "axios";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths } from "date-fns";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BsCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 
 export default function CalendarView() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [events, setEvents] = useState([]);
+  const { user, setUser } = useContext(UserContext);
   
 //! Fetch events from the server -------------------------------------------------------
   useEffect(() => {
@@ -57,7 +59,11 @@ export default function CalendarView() {
                   .filter((event) => format(new Date(event.eventDate), "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
                   .map((event) => (
                     <div key={event._id} className="mt-0 flex md:mt-2">
-                      <Link to={"/event/" + event._id}>
+                      <Link to={!user ? "/login" : "/event/" + event._id } onClick={() => {
+                        if (!user) {
+                          alert("Please login to book tickets!");
+                        }
+                      }}>
                         <div className="text-white bg-primary rounded p-1 font-bold text-xs md:text-base md:p-2">{event.title.toUpperCase()}</div>
                       </Link>
                       

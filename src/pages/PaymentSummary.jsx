@@ -27,6 +27,7 @@ export default function PaymentSummary() {
       eventtime: "",
       ticketprice: "",
       qr: "",
+      ticketId:"",
     },
   };
   //! add default state to the ticket details state
@@ -67,6 +68,65 @@ export default function PaymentSummary() {
       });
   }, [id]);
   //! Getting user details using useeffect and setting to new ticket details with previous details
+
+
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+  const displayRazorPay = async (e) => {
+    e.preventDefault();
+  
+    // Validation for required fields
+    if (!details.name.trim() || !details.email.trim() || !details.contactNo.trim()) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+  
+    if (!/^\S+@\S+\.\S+$/.test(details.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+  
+    if (!/^\d{10}$/.test(details.contactNo)) {
+      alert("Please enter a valid 10-digit contact number.");
+      return;
+    }
+  
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+  
+    const options = {
+      key: "rzp_test_BcjoQSZVtR4JSB",
+      currency: "INR",
+      amount: event.ticketPrice * 100,
+      name: "Event Booking",
+      description: "Complete payment to book the ticket",
+      handler: async function (response) {
+        await createTicket();
+      },
+    };
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+  
+
+
+
+  
   useEffect(() => {
     setTicketDetails((prevTicketDetails) => ({
       ...prevTicketDetails,
@@ -98,19 +158,22 @@ export default function PaymentSummary() {
   };
   //! creating a ticket ------------------------------
   const createTicket = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     //!adding a ticket qr code to booking ----------------------
     try {
       const qrCode = await generateQRCode(
         ticketDetails.ticketDetails.eventname,
         ticketDetails.ticketDetails.name
       );
+      //generate ticket id using date and time
+      const ticketId = new Date().getTime().toString();
       //!updating the ticket details qr with prevoius details ------------------
       const updatedTicketDetails = {
         ...ticketDetails,
         ticketDetails: {
           ...ticketDetails.ticketDetails,
           qr: qrCode,
+          ticketId: ticketId,
         },
       };
       //!posting the details to backend ----------------------------
@@ -166,9 +229,8 @@ export default function PaymentSummary() {
           </button>
         </Link>
       </div>
-      <div className="ml-12 bg-gray-100 shadow-lg mt-8 p-16 w-3/5 float-left">
+      <form onSubmit={displayRazorPay} className="ml-12 bg-gray-100 shadow-lg mt-8 p-16 w-3/5 float-left mt-8 space-y-4">
         {/* Your Details */}
-        <div className="mt-8 space-y-4">
           <h2 className="text-xl font-bold mb-4">Your Details</h2>
           <input
             type="text"
@@ -196,12 +258,10 @@ export default function PaymentSummary() {
               className="input-field ml-10 w-80 h-10 bg-gray-50 border border-gray-30 rounded-sm p-2.5"
             />
           </div>
-        </div>
 
         {/* Payment Option */}
 
-        <div className="mt-10 space-y-4">
-          <h2 className="text-xl font-bold mb-4">Payment Option</h2>
+          {/* <h2 className="text-xl font-bold mb-4">Payment Option</h2>
           <div className="ml-10">
             <button
               type="button"
@@ -243,19 +303,18 @@ export default function PaymentSummary() {
               placeholder="CVV"
               className="input-field w-16 h-10 bg-gray-50 border border-gray-30  rounded-sm p-3"
             />
-          </div>
+          </div> */}
           <div className="float-right">
             <p className="text-sm font-semibold pb-2 pt-8">
-              Total : LKR. {event.ticketPrice}
+              Total : Rs.. {event.ticketPrice}
             </p>
-            <Link to={"/"}>
-              <button type="button" onClick={createTicket} className="primary">
+            {/* <Link to={"/"}> */}
+              <button type="submit" className="primary">
                 Make Payment
               </button>
-            </Link>
+            {/* </Link> */}
           </div>
-        </div>
-      </div>
+      </form>
       <div className="float-right bg-blue-100 w-1/4 p-5 mt-8 mr-12">
         <h2 className="text-xl font-bold mb-8">Order Summary</h2>
         <div className="space-y-1">
@@ -266,8 +325,8 @@ export default function PaymentSummary() {
           <p className="text-xs">{event.eventDate.split("T")[0]},</p>
           <p className="text-xs pb-2"> {event.eventTime}</p>
           <hr className=" my-2 border-t pt-2 border-gray-400" />
-          <p className="float-right font-bold">LKR. {event.ticketPrice}</p>
-          <p className="font-bold">Sub total: {event.ticketPrice}</p>
+          <p className="float-right font-bold">Rs. {event.ticketPrice}</p>
+          <p className="font-bold">Sub total: Rs.{event.ticketPrice}</p>
         </div>
       </div>
     </>

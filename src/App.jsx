@@ -9,14 +9,14 @@ import axios from 'axios'
 import { UserContextProvider } from './UserContext'
 import UserAccountPage from './pages/UserAccountPage'
 import ForgotPassword from './pages/ForgotPassword'
-import ResetPassword from './pages/ResetPassword'
+// import ResetPassword from './pages/ResetPassword'
 import AddEvent from './pages/AddEvent'
 import EventPage from './pages/EventPage'
 import CalendarView from './pages/CalendarView'
 import OrderSummary from './pages/OrderSummary'
 import PaymentSummary from './pages/PaymentSummary'
 import TicketPage from './pages/TicketPage'
-import CreatEvent from './pages/CreateEvent'
+// import CreatEvent from './pages/CreateEvent'
 
 axios.defaults.baseURL = 'http://localhost:4000/';
 axios.defaults.withCredentials=true;
@@ -39,7 +39,7 @@ function App() {
       <Route path='/register' element={<RegisterPage />}/>
       <Route path='/login' element={<LoginPage />}/>
       <Route path='/forgotpassword' element = {<ForgotPassword/>} />
-      <Route path='/resetpassword' element = {<ResetPassword/>} />
+      {/* <Route path='/resetpassword' element = {<ResetPassword/>} /> */}
       <Route path='/event/:id/ordersummary/paymentsummary' element = {<PaymentSummary />} />
       
     

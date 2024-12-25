@@ -153,13 +153,12 @@ export default function Header() {
                   d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"
                 />
               </svg>
-              <div>Wallet</div>
+              <div>My Tickets</div>
             </div>
           </Link>
 
-          <Link to={"/verification"}>
+          {/* <Link to={"/verification"}>
             {" "}
-            {/*TODO:Route verification center page after creating it */}
             <div className="flex flex-col place-items-center py-1 px-3 rounded cursor-pointer hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +173,7 @@ export default function Header() {
               </svg>
               <div>Center</div>
             </div>
-          </Link>
+          </Link> */}
 
           <Link to={"/calendar"}>
             {" "}
@@ -197,7 +196,7 @@ export default function Header() {
           </Link>
         </div>
 
-        <div>
+        {/* <div>
           <div className="flex flex-col place-items-center py-1 px-3 rounded cursor-pointer hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -211,7 +210,7 @@ export default function Header() {
               />
             </svg>
           </div>
-        </div>
+        </div> */}
 
         {/* -------------------IF user is Logged DO this Main-------------------- */}
         {!!user && (
@@ -223,10 +222,11 @@ export default function Header() {
                 {user.name.toUpperCase()}
               </Link>
 
-              <BsFillCaretDownFill
+              {window.innerWidth < 1024 && (<BsFillCaretDownFill
                 className="h-5 w-5 cursor-pointer hover:rotate-180 transition-all"
                 onClick={() => setisMenuOpen(!isMenuOpen)}
               />
+              )}
             </div>
             <div className="hidden md:flex">
               <button onClick={logout} className="secondary">
@@ -264,14 +264,14 @@ export default function Header() {
                 <Link
                   className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg"
                   to={"/wallet"}>
-                  <div>Wallet</div>
+                  <div>My Tickets</div>
                 </Link>
 
-                <Link
+                {/* <Link
                   className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg"
                   to={"/verification"}>
                   <div>Center</div>
-                </Link>
+                </Link> */}
 
                 <Link
                   className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg"

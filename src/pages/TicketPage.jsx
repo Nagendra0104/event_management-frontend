@@ -73,75 +73,81 @@ export default function TicketPage() {
         </div>
       </div>
       <div className="mx-12 grid grid-cols-1 xl:grid-cols-2 gap-5">
-        {userTickets.map((ticket) => (
-          <div key={ticket._id}>
-            <div className="">
-              <div className="h-48 mt-2 gap-2 p-5 bg-gray-100 font-bold rounded-md relative">
-                <button
-                  onClick={() => deleteTicket(ticket._id)}
-                  className="absolute cursor-pointer right-0 mr-2">
-                  <RiDeleteBinLine className=" h-6 w-10 text-red-700 " />
-                </button>
-                <div className="flex justify-start place-items-center text-sm md:text-base font-normal">
-                  <div className=" h-148 w-148">
-                    <img
-                      src={ticket.ticketDetails.qr}
-                      alt="QRCode"
-                      className="aspect-square object-fill "
-                    />
-                  </div>
-                  <div className="ml-6 grid grid-cols-2 gap-x-6 gap-y-2">
-                    <div className="">
-                      Event Name : <br />
-                      <span className=" font-extrabold text-primarydark">
-                        {ticket.ticketDetails.eventname.toUpperCase()}
-                      </span>
+        {userTickets.length > 0 ? (
+          userTickets.map((ticket) => (
+            <div key={ticket._id}>
+              <div className="">
+                <div className="h-48 mt-2 gap-2 p-5 bg-gray-100 font-bold rounded-md relative">
+                  <button
+                    onClick={() => deleteTicket(ticket._id)}
+                    className="absolute cursor-pointer right-0 mr-2">
+                    <RiDeleteBinLine className=" h-6 w-10 text-red-700 " />
+                  </button>
+                  <div className="flex justify-start place-items-center text-sm md:text-base font-normal">
+                    <div className=" h-148 w-148">
+                      <img
+                        src={ticket.ticketDetails.qr}
+                        alt="QRCode"
+                        className="aspect-square object-fill "
+                      />
                     </div>
-
-                    <div>
-                      Date & Time:
-                      <br />{" "}
-                      <span className="font-extrabold text-primarydark">
-                        {
-                          ticket.ticketDetails.eventdate
-                            .toUpperCase()
-                            .split("T")[0]
-                        }
-                        , {ticket.ticketDetails.eventtime}
-                      </span>
-                    </div>
-                    <div>
-                      Name:{" "}
-                      <span className="font-extrabold text-primarydark">
-                        {ticket.ticketDetails.name.toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      Price:{" "}
-                      <span className="font-extrabold text-primarydark">
-                        {" "}
-                        Rs. {ticket.ticketDetails.ticketprice}
-                      </span>
-                    </div>
-                    <div>
-                      Email:{" "}
-                      <span className="font-extrabold text-primarydark">
-                        {ticket.ticketDetails.email}
-                      </span>
-                    </div>
-                    <div>
-                      Ticket ID:
-                      <br />
-                      <span className="font-extrabold text-primarydark">
-                        {ticket.ticketDetails._id}
-                      </span>
+                    <div className="ml-6 grid grid-cols-2 gap-x-6 gap-y-2">
+                      <div className="">
+                        Event Name : <br />
+                        <span className=" font-extrabold text-primarydark">
+                          {ticket.ticketDetails.eventname.toUpperCase()}
+                        </span>
+                      </div>
+  
+                      <div>
+                        Date & Time:
+                        <br />{" "}
+                        <span className="font-extrabold text-primarydark">
+                          {
+                            ticket.ticketDetails.eventdate
+                              .toUpperCase()
+                              .split("T")[0]
+                          }
+                          , {ticket.ticketDetails.eventtime}
+                        </span>
+                      </div>
+                      <div>
+                        Name:{" "}
+                        <span className="font-extrabold text-primarydark">
+                          {ticket.ticketDetails.name.toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        Price:{" "}
+                        <span className="font-extrabold text-primarydark">
+                          {" "}
+                          Rs. {ticket.ticketDetails.ticketprice}
+                        </span>
+                      </div>
+                      <div>
+                        Email:{" "}
+                        <span className="font-extrabold text-primarydark">
+                          {ticket.ticketDetails.email}
+                        </span>
+                      </div>
+                      <div>
+                        Ticket ID:
+                        <br />
+                        <span className="font-extrabold text-primarydark">
+                          {ticket.ticketDetails.ticketId}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center text-2xl font-bold text-primarydark">
+            No Tickets Booked
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

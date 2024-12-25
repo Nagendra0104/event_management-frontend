@@ -7,7 +7,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("user"); // Default role is 'user'
+  const [role, setRole] = useState("user") // Default role is 'user'
   const [redirect, setRedirect] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
