@@ -44,7 +44,7 @@ export default function IndexPage() {
       <div className="mt-1 flex flex-col">
         <div className="hidden sm:block">
           <div href="#" className="flex item-center inset-0">
-            <img src="../src/assets/hero.jpg" alt="" className="w-full h-[60vh]" />
+            <img src="../../public/assets/hero.jpg" alt="" className="w-full h-[60vh]" />
           </div>
         </div>
 
@@ -80,7 +80,7 @@ export default function IndexPage() {
                     </div>
 
                     <img
-                      src={event.image ?? "../src/assets/paduru.png"}
+                      src={event.image ?? "../../public/assets/paduru.png"}
                       alt=""
                       className="rounded-tl-[0.75rem] rounded-tr-[0.75rem] rounded-br-[0] rounded-bl-[0] object-fill aspect-16:9"
                     />
