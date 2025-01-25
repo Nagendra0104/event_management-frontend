@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTicketAlt, FaTrash } from 'react-icons/fa';
 
 const MyEvents = ({ organizerEmail }) => {
     const [events, setEvents] = useState([]);
@@ -10,6 +10,7 @@ const MyEvents = ({ organizerEmail }) => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const user = JSON.parse(localStorage.getItem('user'));
     const navigator = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -48,6 +49,8 @@ const MyEvents = ({ organizerEmail }) => {
                         <th className="py-3 px-5 text-left">Time</th>
                         <th className="py-3 px-5 text-left">Description</th>
                         <th className="py-3 px-5 text-left">Location</th>
+                        <th className="py-3 px-5 text-left">Tickets Sold</th>
+                        <th className="py-3 px-5 text-left">Likes</th>
                         <th className='py-3 px-5 text-left'>Actions</th>
                     </tr>
                 </thead>
@@ -55,14 +58,16 @@ const MyEvents = ({ organizerEmail }) => {
                     {events.map(event => (
                         <tr
                             key={event._id}
-                            onClick={() => handleRowClick(event)}
-                            className="cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+                           
+                            className={`  transition-colors duration-200 ${event.outDated ? 'bg-red-100' : ''}`}
                         >
                             <td className="py-4 px-5 border-b">{event.title}</td>
                             <td className="py-4 px-5 border-b">{event.eventDate.split("T")[0]}</td>
                             <td className="py-4 px-5 border-b">{event.eventTime}</td>
                             <td className="py-4 px-5 border-b">{event.description}</td>
                             <td className="py-4 px-5 border-b">{event.location}</td>
+                            <td className="py-4 px-5 border-b">{event.ticketCount || 0}</td>
+                            <td className="py-4 px-5 border-b">{event.likes || 0}</td>
                             <td className="py-4 px-5 border-b flex space-x-2">
                                 <button
                                     onClick={(e) => {
@@ -84,6 +89,14 @@ const MyEvents = ({ organizerEmail }) => {
                                     className="text-red-600 hover:text-red-900">
                                     <i className="material-icons"><FaTrash /></i>
                                 </button>
+                    {event.ticketCount > 0 && (
+                      <button
+                        onClick={() => navigate(`/tickets?eventName=${event.title}`)}
+                        className="text-green-500 hover:underline flex items-center gap-1"
+                      >
+                        <FaTicketAlt /> View Tickets
+                      </button>
+                    )}
                             </td>
                         </tr>
                     ))}

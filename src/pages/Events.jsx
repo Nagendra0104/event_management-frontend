@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTicketAlt, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Events = () => {
@@ -55,23 +55,27 @@ const Events = () => {
             <tr className="bg-gray-100 text-left">
               <th className="p-2 border-b">Title</th>
               <th className="p-2 border-b">Organizer</th>
-                <th className="p-2 border-b">Email</th>
+              <th className="p-2 border-b">Email</th>
               <th className="p-2 border-b">Date</th>
               <th className="p-2 border-b">Time</th>
               <th className="p-2 border-b">Location</th>
+              <th className="p-2 border-b">Tickets Sold</th>
+              <th className="p-2 border-b">Likes</th>
               <th className="p-2 border-b">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event) => (
-                <tr key={event._id} className="hover:bg-gray-50">
+                <tr key={event._id} className={` ${event.outDated ? 'bg-red-100' : ''}`}>
                   <td className="p-2 border-b">{event.title}</td>
                   <td className="p-2 border-b">{event.organizedBy}</td>
                   <td className="p-2 border-b">{event?.organizerEmail}</td>
                   <td className="p-2 border-b">{new Date(event.eventDate).toLocaleDateString()}</td>
                   <td className="p-2 border-b">{event.eventTime}</td>
                   <td className="p-2 border-b">{event.location}</td>
+                  <td className="p-2 border-b text-center">{event.ticketCount || 0}</td>
+                  <td className="p-2 border-b text-center">{event.likes || 0}</td>
                   <td className="p-2 border-b flex gap-4">
                     <button
                     onClick={() => navigate(`/createEvent?isEdit=true`, { state: { event } })}
@@ -80,22 +84,32 @@ const Events = () => {
                     </button>
                     <button
                     onClick={() => {
-                        axios.delete(`/deleteEvent/${event._id}`)
+                        if(window.confirm('Are you sure you want to delete this event?')) {
+                          axios.delete(`/deleteEvent/${event._id}`)
                             .then(() => {
                             setEvents(events.filter(e => e._id !== event._id));
                             })
                             .catch(err => console.error(err));
                         }
+                      }
                     }
                     className="text-red-500 hover:underline flex items-center gap-1">
                       <FaTrash /> Delete
                     </button>
+                    {event.ticketCount > 0 && (
+                      <button
+                        onClick={() => navigate(`/tickets?eventName=${event.title}`)}
+                        className="text-green-500 hover:underline flex items-center gap-1"
+                      >
+                        <FaTicketAlt /> View Tickets
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="p-4 text-center text-gray-500">
+                <td colSpan="8" className="p-4 text-center text-gray-500">
                   No events found.
                 </td>
               </tr>

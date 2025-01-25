@@ -98,7 +98,7 @@ export default function AddEvent() {
           image: '',
           likes: 0
         });
-        navigate();
+        navigationAfterSubmit();
       })
       .catch((error) => {
         console.error("Error posting event:", error);

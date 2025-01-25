@@ -21,7 +21,7 @@ export default function TicketPage() {
     axios
       .get(`/tickets/user/${user._id}`)
       .then((response) => {
-        setUserTickets(response.data);
+        setUserTickets(response.data.tickets);
       })
       .catch((error) => {
         console.error("Error fetching user tickets:", error);

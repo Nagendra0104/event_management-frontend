@@ -19,6 +19,7 @@ import TicketPage from './pages/TicketPage'
 import MyEvents from './pages/MyEvents'
 import Users from './pages/Users'
 import Events from './pages/Events'
+import Tickets from './pages/tickets'
 // import CreatEvent from './pages/CreateEvent'
 
 // axios.defaults.baseURL = 'https://event-management-backend-inky.vercel.app';
@@ -41,6 +42,7 @@ function App() {
         <Route path='/events' element={<MyEvents />} />
         <Route path='/users' element = {<Users />} />
         <Route path='/allevents' element = {<Events />} />
+        <Route path='/tickets' element = {<Tickets />} />
       </Route>
 
       <Route path='/register' element={<RegisterPage />}/>
