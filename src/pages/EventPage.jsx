@@ -9,7 +9,7 @@ import { io } from "socket.io-client"; // Import Socket.IO
 export default function EventPage() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
-  const [availableTickets, setAvailableTickets] = useState(0); // New state to track ticket count
+  // const [availableTickets, setAvailableTickets] = useState(0); // New state to track ticket count
 
   useEffect(() => {
     if (!id) {
@@ -21,24 +21,24 @@ export default function EventPage() {
       .get(`/event/${id}`)
       .then((response) => {
         setEvent(response.data);
-        setAvailableTickets(response.data.availableTickets); // Set initial ticket count
+        // setAvailableTickets(response.data.availableTickets); // Set initial ticket count
       })
       .catch((error) => {
         console.error("Error fetching events:", error);
       });
 
     // Connect to Socket.IO server and listen for real-time ticket updates
-    const socket = io("http://localhost:5000"); // Update with your backend URL
+    // const socket = io("http://localhost:5000"); // Update with your backend URL
 
-    socket.on("ticketCountUpdate", (data) => {
-      if (data.eventId === id) {
-        setAvailableTickets(data.availableTickets); // Update ticket count on receiving event
-      }
-    });
+    // socket.on("ticketCountUpdate", (data) => {
+    //   if (data.eventId === id) {
+    //     setAvailableTickets(data.availableTickets); // Update ticket count on receiving event
+    //   }
+    // });
 
-    return () => {
-      socket.disconnect(); // Cleanup the socket connection when the component unmounts
-    };
+    // return () => {
+    //   socket.disconnect(); // Cleanup the socket connection when the component unmounts
+    // };
   }, [id]);
 
   //! Copy Functionalities -----------------------------------------------
@@ -126,9 +126,9 @@ export default function EventPage() {
       </div>
 
       {/* Real-time ticket count display */}
-      <div className="mx-2 mt-5 text-md md:text-xl font-bold text-primarydark">
+      {/*<div className="mx-2 mt-5 text-md md:text-xl font-bold text-primarydark">
         Available Tickets: {availableTickets}
-      </div>
+      </div>*/}
 
       <div className="mx-2 mt-5 text-md md:text-xl font-extrabold">
         Share with friends

@@ -6,7 +6,8 @@ import axios from "axios";
 import { UserContext } from "../UserContext";
 
 export default function TicketPage() {
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [userTickets, setUserTickets] = useState([]);
 

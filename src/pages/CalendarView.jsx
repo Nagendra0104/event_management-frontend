@@ -10,13 +10,13 @@ import { UserContext } from "../UserContext";
 export default function CalendarView() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [events, setEvents] = useState([]);
-  const { user, setUser } = useContext(UserContext);
-  
+  // const { user, s} = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem('user'));
 //! Fetch events from the server -------------------------------------------------------
   useEffect(() => {
     
     axios.get("/events").then((response) => {
-      setEvents(response.data);
+      setEvents(response.data.events);
     }).catch((error) => {
       console.error("Error fetching events:", error);
     });

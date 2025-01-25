@@ -12,6 +12,7 @@ export function UserContextProvider({ children }) {
       .get('/profile')
       .then(({ data }) => {
         setUser(data);
+        // localStorage.setItem("user", JSON.stringify(data));
       })
       .catch((error) => {
         console.error("Error fetching user profile:", error);

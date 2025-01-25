@@ -4,15 +4,21 @@ import { UserContext } from "../UserContext";
 import axios from "axios";
 
 export default function UserAccountPage() {
-  const { user, setUser, loading } = useContext(UserContext);
+  const { setUser, loading } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [tickets, setTickets] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       fetchTickets();
+      if (user.role !== "user") {
+        fetchEvents();
+      }
     }
-  }, [user]); // Fetch tickets only after user data is available
+  }, []);
 
   const fetchTickets = async () => {
     axios
@@ -23,6 +29,15 @@ export default function UserAccountPage() {
       .catch((error) => {
         console.error("Error fetching user tickets:", error);
       });
+  };
+
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get(`/event/organizer/${user.email}`);
+      setEvents(response.data.events);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const convertTimeStamptoDate = (timestamp) => {
@@ -82,14 +97,50 @@ export default function UserAccountPage() {
           )}
         </div>
 
-        <div className="mt-8 flex gap-4">
+        {user.role !== "user" && (
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold text-gray-700">My Events</h2>
+            {events.length > 0 ? (
+              <ul className="mt-4 space-y-4">
+                {events.map((event) => (
+                  <li
+                    key={event.id}
+                    className="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow"
+                  >
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        {event.name}
+                      </h3>
+                      <p className="text-gray-600">
+                        Date: {new Date(event.eventDate).toLocaleDateString()} Time: {event.eventTime}
+                      </p>
+                      <p className="text-gray-600">
+                        Location: {event.location}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => navigate(`/event/${event._id}`)}
+                      className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition"
+                    >
+                      View Event
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-600 mt-4">No events organized yet.</p>
+            )}
+          </div>
+        )}
+
+        {/* <div className="mt-8 flex gap-4">
           <button
             onClick={() => navigate("/")}
             className="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition"
           >
             Browse Events
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

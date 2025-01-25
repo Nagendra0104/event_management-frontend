@@ -2,32 +2,41 @@ import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { UserContext } from '../UserContext';
 import { getDownloadURL, uploadBytes, ref, storage } from '../Firebase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function AddEvent() {
-  const { user,loading } = useContext(UserContext);
+  const { loading } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
-  console.log("User:", user);
-  const [formData, setFormData] = useState({
-    owner: "",
-    title: "",
-    optional: "",
-    description: "",
-    organizedBy: "",
-    eventDate: "",
-    eventTime: "",
-    location: "",
-    ticketPrice: 0,
-    image: '',
-    likes: 0
-  });
-  const [isUploading, setIsUploading] = useState(false); // State to track loading
+  const location = useLocation();
+  
+  const queryParams = new URLSearchParams(location.search);
+  const isEdit = queryParams.get('isEdit') === 'true';
 
-  useEffect(() => {
-    if (!loading && user) {
-      setFormData((prev) => ({ ...prev, owner: user.name }));
-    }
-  }, [user, loading]);
+  const event = location.state?.event || {};
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  const [formData, setFormData] = useState({
+    owner: user.name || "",
+    title: event.title || "",
+    optional: event.optional || "",
+    description: event.description || "",
+    organizedBy: event.organizedBy || "",
+    eventDate: formatDate(event.eventDate) || "",
+    eventTime: event.eventTime || "",
+    location: event.location || "",
+    ticketPrice: event.ticketPrice || 0,
+    image: event.image || '',
+    likes: event.likes || 0,
+    organizerEmail: user?.email || ""
+  });
+
+  const [isUploading, setIsUploading] = useState(false); // State to track loading
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -53,15 +62,31 @@ export default function AddEvent() {
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  const navigationAfterSubmit = () => {
+    if(isEdit) {
+      if(user.role === 'admin') {
+        navigate('/allevents');
+      }
+      else {
+        navigate('/events');
+      }
+    }
+    else {
+      navigate('/');
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const apiEndpoint = isEdit ? `/updateEvent/${event._id}` : "/createEvent";
     axios
-      .post("/createEvent", formData)
+      .post(apiEndpoint, formData)
       .then((response) => {
         console.log("Event posted successfully:", response.data);
         alert("Event posted successfully!");
         setFormData({
           owner: user.name,
+          organizerEmail: user.email,
           title: "",
           optional: "",
           description: "",
@@ -73,7 +98,7 @@ export default function AddEvent() {
           image: '',
           likes: 0
         });
-        navigate("/")
+        navigate();
       })
       .catch((error) => {
         console.error("Error posting event:", error);
@@ -90,9 +115,9 @@ export default function AddEvent() {
 
   return (
     <div className='flex flex-col ml-20 mt-10'>
-      <div><h1 className='font-bold text-[36px] mb-5'>Post an Event</h1></div>
+      <div><h1 className='font-bold text-[36px] mb-5'>{isEdit ? "Edit Event" : "Post an Event"}</h1></div>
 
-      <form onSubmit={handleSubmit} className='flex flex-co'>
+      <form onSubmit={handleSubmit} className='flex flex-col w-[50%]'>
         <div className='flex flex-col gap-5'>
           <label className='flex flex-col'>
             Title:
@@ -100,7 +125,7 @@ export default function AddEvent() {
               type="text"
               name="title"
               required
-              className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none '
               value={formData.title}
               onChange={handleChange}
             />
@@ -110,7 +135,7 @@ export default function AddEvent() {
             <textarea
               name="description"
               required
-              className=' rounded mt-2 pl-5 px-4 py-2 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 py-2 ring-sky-700 ring-2 h-8 border-none'
               value={formData.description}
               onChange={handleChange}
             />
@@ -120,7 +145,7 @@ export default function AddEvent() {
             <input
               type="text"
               required
-              className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               name="organizedBy"
               value={formData.organizedBy}
               onChange={handleChange}
@@ -131,7 +156,7 @@ export default function AddEvent() {
             <input
               type="date"
               required
-              className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               name="eventDate"
               value={formData.eventDate}
               onChange={handleChange}
@@ -143,7 +168,7 @@ export default function AddEvent() {
               type="time"
               required
               name="eventTime"
-              className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.eventTime}
               onChange={handleChange}
             />
@@ -154,7 +179,7 @@ export default function AddEvent() {
               type="text"
               required
               name="location"
-              className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.location}
               onChange={handleChange}
             />
@@ -165,7 +190,7 @@ export default function AddEvent() {
               type="number"
               required
               name="ticketPrice"
-              className=' rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 ring-sky-700 ring-2 h-8 border-none'
               value={formData.ticketPrice}
               onChange={handleChange}
             />
@@ -174,14 +199,13 @@ export default function AddEvent() {
             Image:
             <input
               type="file"
-              required
               name="image"
-              className=' rounded mt-2 pl-5 px-4 py-10 ring-sky-700 ring-2 h-8 border-none'
+              className='rounded mt-2 pl-5 px-4 py-10 ring-sky-700 ring-2 h-8 border-none'
               onChange={handleImageUpload}
             />
-            {isUploading && <p>Uploading image...</p>} {/* Loading indicator */}
+            {isUploading && <p>Uploading image...</p>}
             {formData.image && (
-              <img src={formData.image} alt="Uploaded" className="w-32 h-32 mt-2 rounded" /> /* Image preview */
+              <img src={formData.image} alt="Uploaded" className="w-32 h-32 mt-2 rounded" />
             )}
           </label>
           <button className='primary' type="submit">Submit</button>

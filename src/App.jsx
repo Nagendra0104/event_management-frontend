@@ -16,9 +16,13 @@ import CalendarView from './pages/CalendarView'
 import OrderSummary from './pages/OrderSummary'
 import PaymentSummary from './pages/PaymentSummary'
 import TicketPage from './pages/TicketPage'
+import MyEvents from './pages/MyEvents'
+import Users from './pages/Users'
+import Events from './pages/Events'
 // import CreatEvent from './pages/CreateEvent'
 
-axios.defaults.baseURL = 'https://event-management-backend-inky.vercel.app';
+// axios.defaults.baseURL = 'https://event-management-backend-inky.vercel.app';
+axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials=true;
 
 function App() {
@@ -34,6 +38,9 @@ function App() {
         <Route path='/calendar' element={<CalendarView />} />
         <Route path='/wallet' element={<TicketPage />}/>
         <Route path='/event/:id/ordersummary' element = {<OrderSummary />} />
+        <Route path='/events' element={<MyEvents />} />
+        <Route path='/users' element = {<Users />} />
+        <Route path='/allevents' element = {<Events />} />
       </Route>
 
       <Route path='/register' element={<RegisterPage />}/>

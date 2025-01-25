@@ -9,7 +9,8 @@ import Qrcode from "qrcode"; //TODO:
 export default function PaymentSummary() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [details, setDetails] = useState({
     name: "",
     email: "",

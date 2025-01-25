@@ -1,21 +1,23 @@
 /* eslint-disable react/jsx-key */
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BsArrowRightShort } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
-import { UserContext } from "../UserContext";
+// import { UserContext } from "../UserContext";
 
 export default function IndexPage() {
   const [events, setEvents] = useState([]);
-  const { user, setUser } = useContext(UserContext); 
+  // const { user, setUser } = useContext(UserContext); 
+  const user = JSON.parse(localStorage.getItem('user'));
 
   //! Fetch events from the server ---------------------------------------------------------------
   useEffect(() => {
     axios
-      .get("/createEvent")
+      .get("/events")
       .then((response) => {
-        setEvents(response.data);
+        console.log("Events fetched:", response.data.events);
+        setEvents(response.data.events);
       })
       .catch((error) => {
         console.error("Error fetching events:", error);
@@ -50,7 +52,7 @@ export default function IndexPage() {
 
         <div className="mx-10 my-5 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:mx-5 ">
           {/*-------------------------- Checking whether there is a event or not-------------------  */}
-          {events.length > 0 &&
+          {events.length > 0 ? (
             events.map((event) => {
               const eventDate = new Date(event.eventDate);
               const currentDate = new Date();
@@ -147,7 +149,13 @@ export default function IndexPage() {
                 );
               }
               return null;
-            })}
+            })
+          ) : (
+            <div className="text-center text-2xl font-bold text-primarydark">
+              No Events Found
+            </div>
+          )
+            }
         </div>
       </div>
     </>

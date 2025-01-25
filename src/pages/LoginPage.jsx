@@ -30,6 +30,9 @@ export default function LoginPage() {
       try{
         const {data} = await axios.post('/login', {email, password})
         setUser(data);
+        //remove the password from the user object and store it in the local storage
+        delete data.password;
+        localStorage.setItem('user', JSON.stringify(data));
         alert('Login success');
 
         if (rememberMe) {

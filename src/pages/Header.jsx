@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import { RxExit } from "react-icons/rx";
 import { BsFillCaretDownFill } from "react-icons/bs";
+import { MdGroups } from "react-icons/md";
 
 export default function Header() {
-  const { user, setUser } = useContext(UserContext);
+  // const { user, setUser } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [isMenuOpen, setisMenuOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,7 +19,7 @@ export default function Header() {
     axios
       .get("/events")
       .then((response) => {
-        setEvents(response.data);
+        setEvents(response.data.events);
       })
       .catch((error) => {
         console.error("Error fetching events:", error);
@@ -46,8 +48,15 @@ export default function Header() {
 
   //! Logout Function --------------------------------------------------------
   async function logout() {
-    await axios.post("/logout");
-    setUser(null);
+
+    //remove the user from the local storage and set the user to null
+    localStorage.removeItem("user");
+    // window.location.reload();
+    window.location.href = "/";
+    
+    // await axios.post("/logout");
+    // setUser(null);
+   
   }
   //! Search input ----------------------------------------------------------------
   const handleSearchInputChange = (event) => {
@@ -112,7 +121,7 @@ export default function Header() {
         {/* -------------------IF user is Logged DO this Main-------------------- */}
         {!!user && user.role !== "user" && (
           <Link to={"/createEvent"}>
-            <div className="hidden md:flex flex-col place-items-center py-1 px-2 rounded text-primary cursor-pointer hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
+            <div className="hidden md:flex flex-col place-items-center py-1 px-2 rounded  hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
               <button>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -135,8 +144,62 @@ export default function Header() {
           </Link>
         )}
 
+{!!user && user.role === "organizer" && (
+          <Link to={"/events"}>
+            <div className="hidden md:flex flex-col place-items-center py-1 px-2 rounded  hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
+              <button>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="28" fill="#f0f0f0" stroke="#007bff" stroke-width="2"/>
+  <path d="M22 26H42V34H22V26Z" fill="#ff4757"/>
+  <path d="M22 38H42V40H22V38Z" fill="#2ed573"/>
+  <path d="M22 44H32V46H22V44Z" fill="#1e90ff"/>
+  <path d="M34 44H42V46H34V44Z" fill="#1e90ff"/>
+  <path d="M28 20V16H36V20" stroke="#007bff" stroke-width="2"/>
+</svg>
+              </button>
+              <div className="font-bold color-primary text-sm">
+                My Events
+              </div>
+            </div>
+          </Link>
+        )}
+
+{!!user && user.role === "admin" && (
+          <Link to={"/users"}>
+            <div className="hidden md:flex flex-col place-items-center py-1 px-2 rounded  hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
+              <button className="pb-1 pt-1 text-lg">
+              <MdGroups />
+              </button>
+              <div className="font-bold color-primary text-sm">
+                Users
+              </div>
+            </div>
+          </Link>
+        )}
+
+{!!user && user.role === "admin" && (
+          <Link to={"/allevents"}>
+            <div className="hidden md:flex flex-col place-items-center py-1 px-2 rounded  hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
+              <button>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="28" fill="#f0f0f0" stroke="#007bff" stroke-width="2"/>
+  <path d="M22 26H42V34H22V26Z" fill="#ff4757"/>
+  <path d="M22 38H42V40H22V38Z" fill="#2ed573"/>
+  <path d="M22 44H32V46H22V44Z" fill="#1e90ff"/>
+  <path d="M34 44H42V46H34V44Z" fill="#1e90ff"/>
+  <path d="M28 20V16H36V20" stroke="#007bff" stroke-width="2"/>
+</svg>
+              </button>
+              <div className="font-bold color-primary text-sm">
+                Events
+              </div>
+            </div>
+          </Link>
+        )}
+
         <div className="hidden lg:flex gap-5 text-sm">
-          <Link to={"/wallet"}>
+          {!!user && (
+            <Link to={"/wallet"}>
             {" "}
             {/*TODO:Route wallet page after creating it */}
             <div className="flex flex-col place-items-center py-1 px-3 rounded cursor-pointer hover:text-primarydark hover:bg-white hover:shadow-sm shadow-gray-200 hover:transition-shadow duration-1500">
@@ -156,6 +219,7 @@ export default function Header() {
               <div>My Tickets</div>
             </div>
           </Link>
+          )}
 
           {/* <Link to={"/verification"}>
             {" "}
@@ -213,31 +277,43 @@ export default function Header() {
         </div> */}
 
         {/* -------------------IF user is Logged DO this Main-------------------- */}
-        {!!user && (
-          <div className="flex flex-row items-center gap-2 sm:gap-8 ">
-            <div className="flex items-center gap-2">
-              <Link to={"/useraccount"}>
-                {" "}
-                {/*TODO: Route user profile page after creating it -> 1.50*/}
-                {user.name.toUpperCase()}
-              </Link>
-
-              {window.innerWidth < 1024 && (<BsFillCaretDownFill
-                className="h-5 w-5 cursor-pointer hover:rotate-180 transition-all"
-                onClick={() => setisMenuOpen(!isMenuOpen)}
+          {!!user && (
+            <div className="flex flex-row items-center gap-2 sm:gap-8 ">
+              <div className="flex items-center gap-2">
+                <Link to={"/useraccount"} className="flex items-center gap-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a8.25 8.25 0 0115 0"
               />
-              )}
-            </div>
-            <div className="hidden md:flex">
-              <button onClick={logout} className="secondary">
-                <div>Log out</div>
-                <RxExit />
-              </button>
-            </div>
-          </div>
-        )}
+            </svg>
+            <span>Profile</span>
+                </Link>
 
-        {/* -------------------IF user is not Logged in DO this MAIN AND MOBILE-------------------- */}
+                {window.innerWidth < 1024 && (
+            <BsFillCaretDownFill
+              className="h-5 w-5 cursor-pointer hover:rotate-180 transition-all"
+              onClick={() => setisMenuOpen(!isMenuOpen)}
+            />
+                )}
+              </div>
+              <div className="hidden md:flex">
+                <button onClick={logout} className="secondary">
+            <div>Log out</div>
+            <RxExit />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* -------------------IF user is not Logged in DO this MAIN AND MOBILE-------------------- */}
         {!user && (
           <div>
             <Link to={"/login"} className=" ">
@@ -255,11 +331,39 @@ export default function Header() {
             {/* TODO: */}
             <nav className={`block ${isMenuOpen ? "block" : "hidden"} `}>
               <div className="flex flex-col font-semibold text-[16px]">
-                <Link
-                  className="flex hover:bg-background hover:shadow py-2 pt-3 pl-6 pr-8 rounded-lg"
-                  to={"/createEvent"}>
-                  Create Event
-                </Link>
+                {!!user && user.role !== "user" && (
+                  <Link
+                    to={"/createEvent"}
+                    className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg">
+                    <div>Create Event</div>
+                  </Link>
+                )}
+
+{!!user && user.role === "organizer" && (
+                  <Link
+                    to={"/events"}
+                    className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg">
+                    <div>My Events</div>
+                  </Link>
+                )}
+
+{!!user && user.role === "admin" && (
+                  <Link
+                    to={"/users"}
+                    className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg">
+                    <div>Users</div>
+                  </Link>
+                )}
+
+{!!user && user.role === "admin" && (
+                  <Link
+                    to={"/allevents"}
+                    className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg">
+                    <div>Events</div>
+                  </Link>
+                )}
+
+
 
                 <Link
                   className="flex hover:bg-background hover:shadow py-2 pl-6 pr-8 rounded-lg"
