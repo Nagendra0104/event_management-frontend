@@ -22,8 +22,8 @@ import Events from './pages/Events'
 import Tickets from './pages/tickets'
 // import CreatEvent from './pages/CreateEvent'
 
-// axios.defaults.baseURL = 'https://event-management-backend-inky.vercel.app';
-axios.defaults.baseURL = 'http://localhost:4000';
+axios.defaults.baseURL = 'https://event-management-backend-inky.vercel.app';
+// axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials=true;
 
 function App() {
